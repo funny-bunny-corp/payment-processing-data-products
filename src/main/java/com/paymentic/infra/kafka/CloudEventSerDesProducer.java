@@ -17,7 +17,6 @@ import org.apache.kafka.common.serialization.Serdes;
 
 @ApplicationScoped
 public class CloudEventSerDesProducer {
-
   @Produces
   public Serde<CloudEvent> cloudEventSerde() {
     Map<String, Object> ceSerializerConfigs = new HashMap<>();

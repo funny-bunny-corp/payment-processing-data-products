@@ -19,7 +19,6 @@ public class TransactionDetails {
   public Transaction getTransaction() {
     return transaction;
   }
-
   public Seller getSeller() {
     return seller;
   }

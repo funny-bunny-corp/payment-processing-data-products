@@ -41,6 +41,11 @@
 
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>
     </dependency>
 
@@ -66,6 +71,21 @@
       <groupId>io.cloudevents</groupId>
       <artifactId>cloudevents-kafka</artifactId>
       <version>${cloud-events.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-mongodb-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId> quarkus-smallrye-health</artifactId>
     </dependency>
 
   </dependencies>
