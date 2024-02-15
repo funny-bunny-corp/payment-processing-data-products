@@ -16,7 +16,6 @@ import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class OrderStartedProcessor {
-
   private static final String PAYMENT_ORDER_APPROVED_EVENT_TYPE = "paymentic.io.payment-processing.v1.payment-order.approved";
   private static final Logger LOGGER = Logger.getLogger(OrderStartedProcessor.class);
 
@@ -35,7 +34,7 @@ public class OrderStartedProcessor {
           transactionDetails.getTransaction().getId(), event.getId()));
       this.trigger.fire(new UserTransaction(transactionDetails.getTransaction().getId().toString(), transactionDetails.getBuyer().getDocument(),
           new BigDecimal(transactionDetails.getAmount()), transactionDetails.getCheckoutId(),transactionDetails.getPayment(),transactionDetails.getCurrency(),
-          transactionDetails.getAt()));
+          transactionDetails.getAt(),transactionDetails.getSeller()));
     }
     return message.ack();
   }

@@ -2,6 +2,7 @@ package com.paymentic.domain;
 
 import com.paymentic.domain.payment.CheckoutId;
 import com.paymentic.domain.payment.Payment;
+import com.paymentic.domain.payment.Seller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.apache.kafka.common.protocol.types.Field.Str;
@@ -14,10 +15,11 @@ public class UserTransaction {
   private Payment payment;
   private String currency;
   private String at;
+  private Seller seller;
   public UserTransaction() {
   }
   public UserTransaction(String id, String document, BigDecimal value, CheckoutId checkout,
-      Payment payment, String currency, String at) {
+      Payment payment, String currency, String at,Seller seller) {
     this.id = id;
     this.document = document;
     this.value = value;
@@ -25,6 +27,7 @@ public class UserTransaction {
     this.payment = payment;
     this.currency = currency;
     this.at = at;
+    this.seller = seller;
   }
   public String getId() {
     return this.id;
@@ -49,5 +52,8 @@ public class UserTransaction {
   }
   public LocalDateTime at(){
     return LocalDateTime.parse(this.at);
+  }
+  public Seller getSeller() {
+    return seller;
   }
 }
