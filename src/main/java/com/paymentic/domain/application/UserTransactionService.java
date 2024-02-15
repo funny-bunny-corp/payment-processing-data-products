@@ -2,6 +2,7 @@ package com.paymentic.domain.application;
 
 
 import com.paymentic.domain.AverageTransactionsValue;
+import com.paymentic.domain.LastUserTransaction;
 import com.paymentic.domain.UserTransaction;
 import com.paymentic.domain.repositories.UserTransactionRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,6 +21,10 @@ public class UserTransactionService {
   }
   public AverageTransactionsValue totalPerMonth(String document, LocalDate at) {
     return this.userTransactionRepository.totalPerMonth(document, at);
+  }
+
+  public LastUserTransaction lastUserTransaction(String document) {
+    return this.userTransactionRepository.lastUserTransaction(document);
   }
 
 }

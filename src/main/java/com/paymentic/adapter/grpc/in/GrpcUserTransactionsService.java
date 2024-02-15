@@ -1,5 +1,7 @@
 package com.paymentic.adapter.grpc.in;
 
+import com.paymentic.adapter.in.grpc.LastUserTransactionRequest;
+import com.paymentic.adapter.in.grpc.LastUserTransactionResponse;
 import com.paymentic.adapter.in.grpc.UserMonthAverageRequest;
 import com.paymentic.adapter.in.grpc.UserMonthAverageResponse;
 import com.paymentic.adapter.in.grpc.UserTransactionsService;
@@ -24,6 +26,17 @@ public class GrpcUserTransactionsService implements UserTransactionsService {
         .setDocument(average.getDocument())
         .setTotal(average.getAverage().toString())
         .setMonth(at.getMonth().toString())
+        .build());
+  }
+  @Override
+  public Uni<LastUserTransactionResponse> getLastUserTransaction(
+      LastUserTransactionRequest request) {
+    var transaction = this.userTransactionService.lastUserTransaction(request.getDocument());
+    return Uni.createFrom().item(() -> LastUserTransactionResponse.newBuilder()
+        .setDocument(request.getDocument())
+        .setValue(transaction.getValue().toString())
+        .setCurrency(transaction.getCurrency())
+        .setSellerId(transaction.getSellerId())
         .build());
   }
 

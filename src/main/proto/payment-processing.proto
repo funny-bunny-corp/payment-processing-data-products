@@ -10,6 +10,8 @@ package user;
 service UserTransactionsService{
   // Gets the user's month average
   rpc GetUserMonthAverage (UserMonthAverageRequest) returns (UserMonthAverageResponse) {}
+  // Gets last user transaction
+  rpc GetLastUserTransaction (LastUserTransactionRequest) returns (LastUserTransactionResponse) {}
 }
 
 // The request message containing the user's document and month
@@ -23,4 +25,15 @@ message UserMonthAverageResponse {
   string month = 1;
   string document = 2;
   string total = 3;
+}
+
+message LastUserTransactionRequest{
+  string document = 1;
+}
+
+message LastUserTransactionResponse{
+  string document = 1;
+  string sellerId = 2;
+  string currency = 3;
+  string value = 4;
 }

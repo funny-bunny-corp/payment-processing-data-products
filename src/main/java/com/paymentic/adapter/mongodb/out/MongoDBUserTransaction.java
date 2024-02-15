@@ -43,6 +43,10 @@ public class MongoDBUserTransaction implements UserTransactionRepository {
     ));
     return null;
   }
+  @Override
+  public LastUserTransaction lastUserTransaction(String document) {
+    return null;
+  }
 
   private Document document(UserTransaction transaction) {
     var metadata = new Document()
