@@ -10,6 +10,7 @@ import com.paymentic.domain.application.UserTransactionService;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @GrpcService
 public class GrpcUserTransactionsService implements UserTransactionsService {
@@ -22,6 +23,12 @@ public class GrpcUserTransactionsService implements UserTransactionsService {
     var at = LocalDate.parse(request.getMonth());
     AverageTransactionsValue average = this.userTransactionService.totalPerMonth(
         request.getDocument(), at);
+    if (Objects.isNull(average)) {
+      var defaultAverage = AverageTransactionsValue.defaultAverage(request.getDocument());
+      return Uni.createFrom().item(() ->  UserMonthAverageResponse.newBuilder()
+          .setMonth(request.getMonth())
+          .setDocument(defaultAverage.getDocument()).setTotal(defaultAverage.getAverage().toString()).build());
+    }
     return Uni.createFrom().item(() -> UserMonthAverageResponse.newBuilder()
         .setDocument(average.getDocument())
         .setTotal(average.getAverage().toString())
@@ -32,6 +39,9 @@ public class GrpcUserTransactionsService implements UserTransactionsService {
   public Uni<LastUserTransactionResponse> getLastUserTransaction(
       LastUserTransactionRequest request) {
     var transaction = this.userTransactionService.lastUserTransaction(request.getDocument());
+    if (Objects.isNull(transaction)) {
+      return Uni.createFrom().nullItem();
+    }
     return Uni.createFrom().item(() -> LastUserTransactionResponse.newBuilder()
         .setDocument(request.getDocument())
         .setValue(transaction.getValue().toString())
