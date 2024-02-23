@@ -9,7 +9,10 @@ import com.paymentic.domain.AverageTransactionsValue;
 import com.paymentic.domain.application.UserTransactionService;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @GrpcService
@@ -20,9 +23,9 @@ public class GrpcUserTransactionsService implements UserTransactionsService {
   }
   @Override
   public Uni<UserMonthAverageResponse> getUserMonthAverage(UserMonthAverageRequest request) {
-    var at = LocalDate.parse(request.getMonth());
+    var at = toLocalDateTime(request.getMonth());
     AverageTransactionsValue average = this.userTransactionService.totalPerMonth(
-        request.getDocument(), at);
+        request.getDocument(), at.toLocalDate());
     if (Objects.isNull(average)) {
       var defaultAverage = AverageTransactionsValue.defaultAverage(request.getDocument());
       return Uni.createFrom().item(() ->  UserMonthAverageResponse.newBuilder()
@@ -48,6 +51,13 @@ public class GrpcUserTransactionsService implements UserTransactionsService {
         .setCurrency(transaction.getCurrency())
         .setSellerId(transaction.getSellerId())
         .build());
+  }
+
+  private LocalDateTime toLocalDateTime(String month) {
+    month = month.substring(0, month.lastIndexOf(" "));
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+    month = month.substring(0, month.lastIndexOf(" "));
+    return LocalDateTime.parse(month, formatter);
   }
 
 }

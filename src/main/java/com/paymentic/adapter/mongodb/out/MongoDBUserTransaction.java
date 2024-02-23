@@ -2,6 +2,7 @@ package com.paymentic.adapter.mongodb.out;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import com.paymentic.domain.AverageTransactionsValue;
@@ -11,8 +12,11 @@ import com.paymentic.domain.repositories.UserTransactionRepository;
 import com.paymentic.infra.mongodb.qualifiers.LastUserTransactionsCollection;
 import com.paymentic.infra.mongodb.qualifiers.UserTransactionsCollection;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -32,16 +36,27 @@ public class MongoDBUserTransaction implements UserTransactionRepository {
   }
   @Override
   public AverageTransactionsValue totalPerMonth(String document, LocalDate at){
-    AggregateIterable<Document> aggregate = this.userTransactionCollection.aggregate(Arrays.asList(
-        new Document("$addFields", new Document("year", new Document("$year", "$at"))
-            .append("month", new Document("$month", "$at"))),
-        new Document("$match", new Document("year", at.getYear())
-            .append("month", at.getMonth().getValue())).append("metadata.document",document),
-        new Document("$group", new Document("_id", "$metadata.document")
-            .append("totalValue", new Document("$sum", "$value"))),
+    List<Document> aggregationPipeline = Arrays.asList(
+        new Document("$addFields",
+            new Document("year", new Document("$year", "$at"))
+                .append("month", new Document("$month", "$at"))),
+        new Document("$match",
+            new Document("year", at.getYear())
+                .append("month", at.getMonth())
+                .append("metadata.document", document)),
+        // Combine conditions in a single $match stage
+        new Document("$group",
+            new Document("_id", "$metadata.document")
+                .append("totalValue", new Document("$sum", "$value"))),
         new Document("$sort", new Document("_id", 1))
-    ));
-    return null;
+    );
+
+    List<Document> results = (List<Document>) userTransactionCollection.aggregate(aggregationPipeline).into(new ArrayList<Document>());if (results.size() > 0);
+    if (!results.isEmpty()) {
+      var doc = results.get(0);
+      return new AverageTransactionsValue(doc.getString("_id"), new BigDecimal(doc.getDouble("totalValue")));
+    }
+    return AverageTransactionsValue.defaultAverage(document);
   }
   @Override
   public LastUserTransaction lastUserTransaction(String document) {
